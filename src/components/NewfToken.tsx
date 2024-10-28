@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   FaCoins, 
   FaChartLine, 
@@ -10,7 +11,7 @@ import {
   FaArrowRight 
 } from 'react-icons/fa';
 
-// Define types
+// Types remain the same
 interface TokenFeatureProps {
   icon: React.ReactNode;
   title: string;
@@ -32,6 +33,7 @@ interface Sections {
 
 type SectionKey = keyof Sections;
 
+// TokenFeature component remains the same
 const TokenFeature: React.FC<TokenFeatureProps> = ({ icon, title, description, delay }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -59,7 +61,7 @@ const NewfToken: React.FC = () => {
     about: {
       title: "What is Snewf?",
       content: `Snewf is more than just a token—it's a symbol of sobriety and personal transformation. Inspired by Oreo, a Newfoundland dog whose life was tragically cut short by an intoxicated driver, Snewf represents hope, resilience, and the beauty of life when lived free from addiction.`,
-      image: '/api/placeholder/600/400'
+      image: 'https://serenity-gallery.s3.us-east-1.amazonaws.com/web_images/meetsnewf.png'
     },
     utility: {
       title: "Token Utility",
@@ -102,7 +104,6 @@ const NewfToken: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#14121f] py-20">
-      {/* Rest of the component remains the same */}
       <div className="px-4 sm:px-6 lg:px-40">
         <div className="max-w-[1200px] mx-auto">
           {/* Header Section */}
@@ -152,11 +153,36 @@ const NewfToken: React.FC = () => {
                 <span>Read Whitepaper</span>
                 <FaArrowRight />
               </motion.button>
+
+
+              <motion.button
+                className="flex items-center gap-2 px-8 py-4 rounded-full
+                          bg-[#0ADAFF]/10 text-white font-bold
+                          shadow-[inset_-2px_-2px_10px_rgba(255,255,255,0.1),_inset_2px_2px_10px_rgba(0,0,0,0.3)]
+                          hover:bg-[#0ADAFF] hover:text-black
+                          transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Link 
+                  to="/howtobuy" 
+                  
+                >
+                  <span>How to Buy</span>
+                 
+                </Link>
+                <FaArrowRight />
+              </motion.button>
+
             </div>
 
-            {/* Image Side */}
+
+            
+
+            {/* Image Side - Updated for better image fitting */}
             <motion.div
-              className="relative h-[400px] rounded-2xl overflow-hidden
+              className="relative min-h-[400px] lg:h-[500px] rounded-2xl overflow-hidden
                          shadow-[0_0_30px_rgba(10,218,255,0.2)]"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -165,9 +191,9 @@ const NewfToken: React.FC = () => {
               <img 
                 src={sections[activeSection].image}
                 alt={sections[activeSection].title}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain bg-black/20"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#432a65]/50 to-[#00343d]/50" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#432a65]/30 to-[#00343d]/30" />
             </motion.div>
           </div>
 
@@ -180,31 +206,6 @@ const NewfToken: React.FC = () => {
               />
             ))}
           </div>
-
-          {/* Tokenomics Section */}
-          <motion.div
-            className="bg-black/20 backdrop-blur-sm rounded-2xl p-8
-                       shadow-[inset_-2px_-2px_10px_rgba(255,255,255,0.1),_inset_2px_2px_10px_rgba(0,0,0,0.3)]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="font-trend text-white text-3xl font-black mb-6">Tokenomics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4 rounded-xl bg-[#0ADAFF]/10">
-                <h3 className="text-[#0ADAFF] text-2xl font-bold mb-2">35%</h3>
-                <p className="text-white/80">Team & Founders</p>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-[#0ADAFF]/10">
-                <h3 className="text-[#0ADAFF] text-2xl font-bold mb-2">20%</h3>
-                <p className="text-white/80">Rewards Pool</p>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-[#0ADAFF]/10">
-                <h3 className="text-[#0ADAFF] text-2xl font-bold mb-2">45%</h3>
-                <p className="text-white/80">Community & Development</p>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </div>

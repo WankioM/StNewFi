@@ -33,7 +33,7 @@ const IntroductionSection = () => {
                   <div className="h-[600px] rounded-2xl overflow-hidden">
                     <div className="w-full h-full bg-gradient-to-br from-[#432a65] via-[#6fba73] to-[#00343d] opacity-80">
                       <img 
-                        src="/api/placeholder/800/600"
+                        src="https://serenity-gallery.s3.us-east-1.amazonaws.com/web_images/thesobermovement.png"
                         alt="Sober Movement Community"
                         className="w-full h-full object-cover mix-blend-overlay"
                       />
@@ -53,7 +53,7 @@ const IntroductionSection = () => {
                   <div className="h-[600px] rounded-2xl overflow-hidden lg:order-1">
                     <div className="w-full h-full bg-gradient-to-br from-[#432a65] via-[#6fba73] to-[#00343d] opacity-80">
                       <img 
-                        src="/api/placeholder/800/600"
+                        src="https://serenity-gallery.s3.us-east-1.amazonaws.com/web_images/meetsnewf.png"
                         alt="SNEWF Mascot"
                         className="w-full h-full object-cover mix-blend-overlay"
                       />

@@ -7,6 +7,8 @@ import HomeBg from './Assets/Home.png';
 import AboutUs from './components/AboutUs';
 import IntroductionSection from './components/Mid';
 import NewfToken from './components/NewfToken';
+import HowToBuy from './components/HowtoBuy';
+import Governance from './components/Governance';
 
 // Type for AppWrapper props
 interface AppWrapperProps {
@@ -54,6 +56,8 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/token" element={<NewfToken />} />
+            <Route path="/howtobuy" element={<HowToBuy />} />
+            <Route path="/governance" element={<Governance/>} />
           </Routes>
         </AppWrapper>
       </div>

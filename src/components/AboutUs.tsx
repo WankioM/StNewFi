@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { FaArrowDown, FaArrowRight, FaQuoteLeft } from 'react-icons/fa';
 import AboutImage from '../Assets/aboutus.png';
 
-// Types remain the same
 type CardId = 'story' | 'mission' | 'community';
 
 interface Card {
@@ -11,7 +10,7 @@ interface Card {
   title: string;
   subtitle: string;
   content: string;
-  image: string;
+  image?: string;  // Made image optional
 }
 
 const AboutUs = () => {
@@ -21,13 +20,13 @@ const AboutUs = () => {
     {
       id: 'story',
       title: 'Our Story',
-      subtitle: 'A Journey of Transformation',
-      content: `The Sober Movement was born from a deeply personal journey, one that started in the depths of addiction and emerged into a life of clarity, empowerment, and hope. Today marks 6.5 months clean for me, and while the road has been challenging, it's also been transformative. There was a time when I couldn't imagine a life without alcohol or substances. Denial had a firm grip on me, and I believed that recovery was impossible—that life would never feel fulfilling again without the crutch of addiction.
+      subtitle: 'A Journey of Recovery, Hope, and Renewal',
+      content: `The Sober Movement was born from the harsh reality of addiction's impact on individuals and families. Addiction tears through lives, causing pain and breaking apart relationships, leaving people feeling trapped and hopeless. But recovery is possible. With courage, support, and a willingness to face the truth, people can rebuild their lives and find strength, connection, and purpose again.
 
-But something shifted. It wasn't a dramatic moment, but rather a quiet realization that I couldn't keep living the way I was. With the support of close friends, like my co-founder David, I began to make small changes—choosing sobriety, day by day. Each day, the fog lifted a little more, and life slowly became beautiful in ways I hadn't expected. I started to feel things more deeply, connect with people more meaningfully, and experience moments of genuine joy.
+The Sober Movement is a beacon of hope for those struggling and for their loved ones who stand by them. It offers a community of support, daily guidance, and a path toward healing. Serenity, our app, serves as a lifeline, providing strength and solidarity to those on their journey.
 
-This journey inspired the creation of Serenity and the Sober Movement. I realized that recovery is not just about stopping destructive behaviors—it's about reclaiming your life. It's about finding a community of people who understand the struggle and share in the triumphs, no matter how small. That's why we created Serenity—to provide people with a tool that offers daily support, guidance, and a sense of belonging. And from this journey came the birth of the Sober Movement, a revolution to help others rise above their challenges and live boldly.`,
-      image: '/api/placeholder/1200/600'
+This movement is more than just about sobriety; it's about reclaiming life. It's a call to live boldly and to show that recovery is not only possible but can lead to a beautiful, fulfilling life.`,
+      image: 'https://serenity-gallery.s3.us-east-1.amazonaws.com/web_images/our+story.png'
     },
     {
       id: 'mission',
@@ -35,15 +34,14 @@ This journey inspired the creation of Serenity and the Sober Movement. I realize
       subtitle: 'Reclaiming Lives Through Community',
       content: `Our mission is simple yet powerful: to help people reclaim their lives through sobriety, community, and daily engagement. We believe that sobriety can be beautiful, and that with the right support, anyone can live a life that feels empowering and full of purpose. Serenity isn't just an app—it's a lifeline for people who need daily reminders that they are not alone, and that every day offers the chance for positive change. Through meditation, mood tracking, daily tasks, and AI therapy, Serenity creates a personalized space for users to grow and thrive on their recovery journey.
 
-We know that recovery is not just about abstinence—it's about building a life that's worth staying sober for. That's the foundation of our mission.`,
-      image: '/api/placeholder/1200/600'
+We know that recovery is not just about abstinence—it's about building a life that's worth staying sober for. That's the foundation of our mission.`
     },
     {
       id: 'community',
       title: 'Our Community',
       subtitle: 'Growing Stronger Together',
       content: `The heart of the Sober Movement lies in its vibrant community of individuals committed to living their best lives through sobriety. Every member brings their unique story, creating a tapestry of experiences that inspire and support others on their journey. Through shared experiences, daily victories, and collective growth, we're building something truly special—a space where sobriety is celebrated and transformation is possible.`,
-      image: '/api/placeholder/1200/600'
+      image: 'https://serenity-gallery.s3.us-east-1.amazonaws.com/web_images/community.png'
     }
   ];
 
@@ -78,7 +76,6 @@ We know that recovery is not just about abstinence—it's about building a life 
           </motion.div>
         </motion.div>
 
-        {/* Vertical Sections */}
         <div className="space-y-32">
           {sections.map((section, index) => (
             <motion.section
@@ -89,9 +86,7 @@ We know that recovery is not just about abstinence—it's about building a life 
               viewport={{ once: true }}
               className="relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8"
             >
-              {/* Content Container */}
-              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 ${index % 2 === 0 ? '' : 'lg:grid-flow-dense'}`}>
-                {/* Text Content */}
+              <div className={`grid grid-cols-1 ${section.image ? 'lg:grid-cols-2' : ''} gap-8 ${index % 2 === 0 ? '' : 'lg:grid-flow-dense'}`}>
                 <div className={`space-y-6 ${expandedSection === section.id ? 'lg:col-span-2' : ''}`}>
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -134,12 +129,10 @@ We know that recovery is not just about abstinence—it's about building a life 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {/* Glow effect */}
                     <div className="absolute inset-0 bg-[#0ADAFF]/20 blur-xl 
                                   group-hover:bg-[#0ADAFF]/30 transition-all duration-300" 
                     />
                     
-                    {/* Button content */}
                     <div className="relative flex items-center gap-2">
                       <span className="transform group-hover:translate-x-[-4px] transition-all duration-300">
                         {expandedSection === section.id ? 'Read Less' : 'Read More'}
@@ -148,7 +141,6 @@ We know that recovery is not just about abstinence—it's about building a life 
                                               transition-all duration-300 group-hover:text-[#0ADAFF]" />
                     </div>
                     
-                    {/* Shine effect */}
                     <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] 
                                   bg-gradient-to-r from-transparent via-white/10 to-transparent
                                   transition-transform duration-1000 ease-in-out" 
@@ -156,8 +148,7 @@ We know that recovery is not just about abstinence—it's about building a life 
                   </motion.button>
                 </div>
 
-                {/* Image Section */}
-                {expandedSection !== section.id && (
+                {section.image && expandedSection !== section.id && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -175,7 +166,6 @@ We know that recovery is not just about abstinence—it's about building a life 
                 )}
               </div>
 
-              {/* Decorative Elements */}
               <div className="absolute -z-10 inset-0 pointer-events-none">
                 <div className="absolute top-1/2 -left-4 w-24 h-24 bg-[#0ADAFF]/5 rounded-full blur-xl" />
                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-[#432a65]/5 rounded-full blur-xl" />
