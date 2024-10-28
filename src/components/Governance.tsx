@@ -31,7 +31,7 @@ const Governance = () => {
     {
       number: "1",
       title: "Proposal Submission",
-      description: "As a Snewf holder, you can submit proposals for platform improvements, community initiatives, or treasury allocations. Each proposal undergoes initial review before entering the community phase."
+      description: "As a St. Newfie  holder, you can submit proposals for platform improvements, community initiatives, or treasury allocations. Each proposal undergoes initial review before entering the community phase."
     },
     {
       number: "2",
@@ -41,7 +41,7 @@ const Governance = () => {
     {
       number: "3",
       title: "Voting Phase",
-      description: "Each Snewf token represents voting power in the ecosystem. Participate in transparent voting to shape the platform's future directly."
+      description: "Each St. Newfi token represents voting power in the ecosystem. Participate in transparent voting to shape the platform's future directly."
     }
   ];
 
