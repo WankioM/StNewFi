@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { HiMenu, HiX } from "react-icons/hi";
 import { WalletPopup } from "./BuyNewf";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isWalletPopupOpen, setIsWalletPopupOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const scrollToIntroduction = () => {
     if (window.location.pathname !== '/') {
@@ -27,6 +29,7 @@ const Header = () => {
         });
       }
     }
+    setIsMobileMenuOpen(false);
   };
 
   const goHome = () => {
@@ -35,19 +38,56 @@ const Header = () => {
       top: 0,
       behavior: 'smooth'
     });
+    setIsMobileMenuOpen(false);
   };
 
   const handleWalletSelect = (walletType: 'metamask' | 'coinbase') => {
-    // Here you'll implement the wallet connection logic
     console.log(`Connecting to ${walletType} wallet`);
   };
 
+  // Modified NavLinks to accept onLinkClick prop
+  const NavLinks = ({ onLinkClick }: { onLinkClick?: () => void }) => (
+    <>
+      <button 
+        onClick={() => {
+          scrollToIntroduction();
+          onLinkClick?.();
+        }}
+        className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
+      >
+        Introduction
+      </button>
+      <Link 
+        to="/about"
+        onClick={onLinkClick}
+        className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
+      >
+        About Us
+      </Link>
+      <Link 
+        to="/token"
+        onClick={onLinkClick}
+        className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
+      >
+        Newf Token
+      </Link>
+      <Link 
+        to="/governance"
+        onClick={onLinkClick}
+        className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
+      >
+        Governance
+      </Link>
+    </>
+  );
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap bg-black/20 backdrop-blur-sm border-b border-solid border-white/10 px-10 py-3">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap bg-black/20 backdrop-blur-sm border-b border-solid border-white/10 px-4 md:px-10 py-3">
+        {/* Logo and Title */}
         <div 
           onClick={goHome}
-          className="flex items-center gap-4 text-white cursor-pointer hover:text-[#0ADAFF] transition-colors"
+          className="flex items-center gap-2 md:gap-4 text-white cursor-pointer hover:text-[#0ADAFF] transition-colors"
         >
           <div className="size-4">
             <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,36 +99,15 @@ const Header = () => {
               ></path>
             </svg>
           </div>
-          <h2 className="text-white text-lg font-trend font-bold leading-tight tracking-[-0.015em]">
+          <h2 className="text-white text-sm md:text-lg font-trend font-bold leading-tight tracking-[-0.015em]">
             The Sober Movement
           </h2>
         </div>
-        <div className="flex flex-1 justify-end gap-8">
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex flex-1 justify-end gap-8">
           <div className="flex items-center gap-9">
-            <button 
-              onClick={scrollToIntroduction}
-              className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
-            >
-              Introduction
-            </button>
-            <Link 
-              to="/about"
-              className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
-            >
-              About Us
-            </Link>
-            <Link 
-              to="/token"
-              className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
-            >
-              Newf Token
-            </Link>
-            <Link 
-              to="/governance"
-              className="text-white/80 hover:text-white text-sm font-medium leading-normal transition-colors"
-            >
-              Governance
-            </Link>
+            <NavLinks />
           </div>
           <button 
             onClick={() => setIsWalletPopupOpen(true)}
@@ -103,7 +122,41 @@ const Header = () => {
             <span className="truncate">Buy St. Newfie</span>
           </button>
         </div>
+
+        {/* Mobile Menu Button */}
+        <div className="flex md:hidden items-center gap-2">
+          <button 
+            onClick={() => setIsWalletPopupOpen(true)}
+            className="flex items-center justify-center 
+                     overflow-hidden rounded-full h-8 px-4 mr-2
+                     bg-black/20 text-white text-xs font-bold leading-normal tracking-[0.015em]
+                     border-2 border-[#0ADAFF] 
+                     shadow-[0_0_15px_rgba(10,218,255,0.3)]
+                     active:bg-[#0ADAFF] active:text-black active:border-transparent
+                     transition-all duration-300">
+            <span className="truncate">Buy</span>
+          </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white p-2"
+          >
+            {isMobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+          </button>
+        </div>
       </header>
+
+      {/* Mobile Menu */}
+      <div 
+        className={`fixed inset-0 z-40 transform ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform duration-300 ease-in-out md:hidden`}
+      >
+        <div className="absolute inset-0 bg-black/95 backdrop-blur-sm">
+          <div className="flex flex-col items-center justify-center h-full gap-8">
+            <NavLinks onLinkClick={() => setIsMobileMenuOpen(false)} />
+          </div>
+        </div>
+      </div>
 
       <WalletPopup
         isOpen={isWalletPopupOpen}
