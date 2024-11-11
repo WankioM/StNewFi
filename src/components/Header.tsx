@@ -1,13 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
+import { FaWallet } from "react-icons/fa";
 import { WalletPopup } from "./BuyNewf";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isWalletPopupOpen, setIsWalletPopupOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [walletInfo, setWalletInfo] = useState({
+    isConnected: false,
+    address: "",
+    type: "" as "metamask" | "coinbase" | ""
+  });
 
+  // Function to shorten wallet address
+  const shortenAddress = (address: string) => {
+    if (!address) return "";
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const handleWalletSelect = (walletType: 'metamask' | 'coinbase', address: string) => {
+    setWalletInfo({
+      isConnected: true,
+      address: address,
+      type: walletType
+    });
+    setIsWalletPopupOpen(false);
+  };
+
+  const handleBuyClick = () => {
+    if (!walletInfo.isConnected) {
+      setIsWalletPopupOpen(true);
+    } else {
+      // Navigate to buy page when wallet is connected
+      navigate('/buy');
+    }
+  };
+
+  // Rest of your existing navigation functions
   const scrollToIntroduction = () => {
     if (window.location.pathname !== '/') {
       navigate('/');
@@ -41,11 +72,6 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const handleWalletSelect = (walletType: 'metamask' | 'coinbase') => {
-    console.log(`Connecting to ${walletType} wallet`);
-  };
-
-  // Modified NavLinks to accept onLinkClick prop
   const NavLinks = ({ onLinkClick }: { onLinkClick?: () => void }) => (
     <>
       <button 
@@ -109,24 +135,44 @@ const Header = () => {
           <div className="flex items-center gap-9">
             <NavLinks />
           </div>
-          <button 
-            onClick={() => setIsWalletPopupOpen(true)}
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center 
-                     overflow-hidden rounded-full h-10 px-6 
-                     bg-black/20 text-white text-sm font-bold leading-normal tracking-[0.015em]
-                     border-2 border-[#0ADAFF] 
-                     shadow-[0_0_15px_rgba(10,218,255,0.3)]
-                     hover:bg-[#0ADAFF] hover:text-black hover:border-transparent
-                     hover:shadow-[0_0_20px_rgba(10,218,255,0.5)]
-                     transition-all duration-300">
-            <span className="truncate">Buy St. Newfie</span>
-          </button>
+          <div className="flex items-center gap-4">
+            {walletInfo.isConnected && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 border border-[#0ADAFF]/30">
+                <FaWallet className="text-[#0ADAFF] text-sm" />
+                <span className="text-white/80 text-sm font-medium">
+                  {shortenAddress(walletInfo.address)}
+                </span>
+              </div>
+            )}
+            <button 
+              onClick={handleBuyClick}
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center 
+                       overflow-hidden rounded-full h-10 px-6 
+                       bg-black/20 text-white text-sm font-bold leading-normal tracking-[0.015em]
+                       border-2 border-[#0ADAFF] 
+                       shadow-[0_0_15px_rgba(10,218,255,0.3)]
+                       hover:bg-[#0ADAFF] hover:text-black hover:border-transparent
+                       hover:shadow-[0_0_20px_rgba(10,218,255,0.5)]
+                       transition-all duration-300">
+              <span className="truncate">
+                {walletInfo.isConnected ? 'Buy St. Newfie' : 'Connect Wallet'}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-2">
+          {walletInfo.isConnected && (
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-black/20 border border-[#0ADAFF]/30">
+              <FaWallet className="text-[#0ADAFF] text-xs" />
+              <span className="text-white/80 text-xs font-medium">
+                {shortenAddress(walletInfo.address)}
+              </span>
+            </div>
+          )}
           <button 
-            onClick={() => setIsWalletPopupOpen(true)}
+            onClick={handleBuyClick}
             className="flex items-center justify-center 
                      overflow-hidden rounded-full h-8 px-4 mr-2
                      bg-black/20 text-white text-xs font-bold leading-normal tracking-[0.015em]
@@ -134,7 +180,9 @@ const Header = () => {
                      shadow-[0_0_15px_rgba(10,218,255,0.3)]
                      active:bg-[#0ADAFF] active:text-black active:border-transparent
                      transition-all duration-300">
-            <span className="truncate">Buy</span>
+            <span className="truncate">
+              {walletInfo.isConnected ? 'Buy' : 'Connect'}
+            </span>
           </button>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
