@@ -13,7 +13,15 @@ const Header = () => {
     address: "",
     type: "" as "metamask" | "coinbase" | ""
   });
-
+// Initialize from localStorage on mount
+useEffect(() => {
+  const savedWalletType = localStorage.getItem('walletType') as "metamask" | "coinbase" | "" ;
+  const savedAddress = localStorage.getItem('walletAddress');
+  
+  if (savedWalletType && savedAddress) {
+    handleWalletSelect(savedWalletType,savedAddress)
+  }
+}, []);
   // Function to shorten wallet address
   const shortenAddress = (address: string) => {
     if (!address) return "";
