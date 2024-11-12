@@ -1,0 +1,4 @@
+declare module '@coinbase/wallet-sdk' {
+  const CoinbaseWalletSDK: any;
+  export default CoinbaseWalletSDK;
+}

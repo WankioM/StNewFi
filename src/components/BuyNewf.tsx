@@ -2,56 +2,35 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaEthereum } from 'react-icons/fa';
 import { SiCoinbase } from 'react-icons/si';
+import  CoinbaseWalletSDK  from '@coinbase/wallet-sdk';
+import Web3 from 'web3';
 
 interface WalletPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onWalletSelect: (walletType: 'metamask' | 'coinbase') => void;
+  onWalletSelect: (walletType: 'metamask' | 'coinbase', address: string) => void;
 }
+const APP_NAME = 'MyApp';
+const APP_LOGO_URL = 'https://example.com/logo.png';
+const DEFAULT_ETH_JSONRPC_URL = 'https://mainnet.infura.io/v3/YOUR_INFURA_KEY';
+const POLYGON_CHAIN_ID = '0x89';
+const APP_SUPPORTED_CHAIN_IDS = [8453, 84532, 137]; // Base, Base Sepolia, Polygon
 
 export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWalletSelect }) => {
   const handleMetaMaskConnect = async () => {
     if (window.ethereum) {
       try {
-        // Request account access
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        
-        // Check if we're on Polygon network (chainId: 0x89)
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const walletAddress = accounts[0];
+
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        
         if (chainId !== '0x89') {
-          // Prompt user to switch to Polygon
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x89' }],
-            });
-          } catch (switchError: any) {
-            // If the chain hasn't been added to MetaMask
-            if (switchError.code === 4902) {
-              try {
-                await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [{
-                    chainId: '0x89',
-                    chainName: 'Polygon Mainnet',
-                    nativeCurrency: {
-                      name: 'MATIC',
-                      symbol: 'MATIC',
-                      decimals: 18
-                    },
-                    rpcUrls: ['https://polygon-rpc.com/'],
-                    blockExplorerUrls: ['https://polygonscan.com/']
-                  }],
-                });
-              } catch (addError) {
-                console.error('Error adding Polygon network:', addError);
-              }
-            }
-          }
+          await switchToPolygon(window.ethereum);
         }
-        
-        onWalletSelect('metamask');
+
+        onWalletSelect('metamask', walletAddress);
+        localStorage.setItem('walletType', 'metamask');
+        localStorage.setItem('walletAddress',walletAddress);
         onClose();
       } catch (error) {
         console.error('Error connecting to MetaMask:', error);
@@ -62,11 +41,76 @@ export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWal
   };
 
   const handleCoinbaseConnect = async () => {
-    // Implementation for Coinbase Wallet connection would go here
-    onWalletSelect('coinbase');
-    onClose();
+
+    // Initialize Coinbase Wallet SDK with correct type
+    const coinbaseWallet = new CoinbaseWalletSDK({
+      appName: APP_NAME,
+      appLogoUrl: APP_LOGO_URL,
+      appChainIds:APP_SUPPORTED_CHAIN_IDS,
+      
+    
+    });
+
+    // Create Web3 Provider
+    const ethereum = coinbaseWallet.makeWeb3Provider();
+    const web3 = new Web3(ethereum as any);
+
+    try {
+      // Request account access
+      const accounts = await ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      }) as string[];
+      console.log({accounts});
+      const walletAddress = accounts[0];
+      console.log({ walletAddress });
+      web3.eth.defaultAccount = walletAddress;
+
+      // Check and switch to Polygon if needed
+      const chainId = await ethereum.request({ method: 'eth_chainId' });
+      if (chainId !== POLYGON_CHAIN_ID) {
+        await switchToPolygon(ethereum);
+      }
+
+      onWalletSelect('coinbase', walletAddress);
+      localStorage.setItem('walletType', 'coinbase');
+        localStorage.setItem('walletAddress',walletAddress);
+      onClose();
+    } catch (error) {
+      console.error('Error connecting to Coinbase Wallet:', error);
+    }
   };
 
+  const switchToPolygon = async (provider: any) => {
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: POLYGON_CHAIN_ID }],
+      });
+    } catch (switchError: any) {
+      if (switchError.code === 4902) {
+        try {
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: POLYGON_CHAIN_ID,
+                chainName: 'Polygon Mainnet',
+                nativeCurrency: { 
+                  name: 'MATIC', 
+                  symbol: 'MATIC', 
+                  decimals: 18 
+                },
+                rpcUrls: ['https://polygon-rpc.com/'],
+                blockExplorerUrls: ['https://polygonscan.com/'],
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error('Error adding Polygon network:', addError);
+        }
+      }
+    }
+  };
   return (
     <AnimatePresence>
       {isOpen && (
@@ -85,7 +129,6 @@ export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWal
             exit={{ scale: 0.95, opacity: 0 }}
             className="relative w-full max-w-md rounded-2xl bg-[#14121f] p-6 shadow-[0_0_30px_rgba(10,218,255,0.2)]"
           >
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute right-4 top-4 text-white/60 hover:text-white transition-colors"
@@ -93,7 +136,6 @@ export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWal
               <FaTimes className="h-5 w-5" />
             </button>
 
-            {/* Content */}
             <div className="text-center mb-8">
               <h2 className="font-trend text-white text-2xl font-black mb-2">
                 Connect Wallet
@@ -103,7 +145,6 @@ export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWal
               </p>
             </div>
 
-            {/* Wallet Options */}
             <div className="space-y-4">
               <button
                 onClick={handleMetaMaskConnect}
@@ -148,12 +189,14 @@ export const WalletPopup: React.FC<WalletPopupProps> = ({ isOpen, onClose, onWal
   );
 };
 
+
 const BuyNewf = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const handleWalletSelect = (walletType: 'metamask' | 'coinbase') => {
+  const handleWalletSelect = (walletType: 'metamask' | 'coinbase', address: string) => {
     console.log(`Selected wallet: ${walletType}`);
-    // Add wallet connection logic here
+    console.log(`Wallet address: ${address}`);
+    // Add your smart contract interaction logic here using the wallet address
   };
 
   return (
